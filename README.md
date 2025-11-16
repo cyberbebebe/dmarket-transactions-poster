@@ -9,16 +9,16 @@ Requires **Go 1.16+** (tested on Go 1.24.5, Windows 10).
 1. Clone the repo: `git clone https://github.com/cyberbebebe/dmarket-transactions-poster.git`
 2. `cd dmarket-transactions-poster`
 3. Copy and fill config templates:
-PRIVATE KEYs
-`copy config\secretKeys.example.json config\secretKeys.json` (Windows)
-or `cp config/secretKeys.example.json config/secretKeys.json` (Unix/Mac)
-fill with your DMarket PRIVATE API key(s) (use array even if 1 account tracking) and Telegram bot token(s) (get from [@BotFather](https://t.me/BotFather) in Telegram).
+   PRIVATE KEYs
+   `copy config\secretKeys.example.json config\secretKeys.json` (Windows)
+   or `cp config/secretKeys.example.json config/secretKeys.json` (Unix/Mac)
+   fill with your DMarket PRIVATE API key(s) (use array even if 1 account tracking) and Telegram bot token(s) (get from [@BotFather](https://t.me/BotFather) in Telegram).
 
-PUBLIC KEYs -> Telegram chat IDs
-`copy config\chatids.example.json config\chatids.json` (Windows)
-or `cp config/chatids.example.json config/chatids.json` (Unix/Mac)
-fill with your DMarket PUBLIC API key(s) (if needed - multiple) and corresponding Telegram chat ID (IDs if multiple).
-To get a chat ID (channel ID): Visit [web.telegram.org](https://web.telegram.org), open your created channel, check the address bar—the URL ends with something like `#-721752185`. For posting, prefix it with `-100` (e.g., `"transactions": "-100721752185"` in `chatids.json`).
+   PUBLIC KEYs -> Telegram chat IDs
+   `copy config\chatids.example.json config\chatids.json` (Windows)
+   or `cp config/chatids.example.json config/chatids.json` (Unix/Mac)
+   fill with your DMarket PUBLIC API key(s) (if needed - multiple) and corresponding Telegram chat ID (IDs if multiple).
+   To get a chat ID (channel ID): Visit [web.telegram.org](https://web.telegram.org), open your created channel, check the address bar—the URL ends with something like `#-721752185`. For posting, prefix it with `-100` (e.g., `"transactions": "-100721752185"` in `chatids.json`).
 
 4. Install dependencies: `go mod tidy`
 5. Run the app:
