@@ -1,6 +1,6 @@
 # DMarket-To-Telegram Transactions Poster
 
-A Go application to track DMarket transactions such as Sales, Purchases and Closed Targets and post them to Telegram via bot.
+A Go application to post DMarket transactions such as Sales, Purchases and Closed Targets to Telegram.
 
 ## Setup
 
