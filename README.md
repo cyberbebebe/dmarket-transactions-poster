@@ -11,11 +11,11 @@ Requires **Go 1.16+** (uses features like `os.ReadFile`; tested on 1.24.5).
 3. Copy and fill config templates:
    * `copy config\secretKeys.example.json config\secretKeys.json` (Windows)
    * or `cp config/secretKeys.example.json config/secretKeys.json` (Unix/Mac)
-     fill with your DMarket PRIVATE API key(s) (use array even if 1 account tracking) and Telegram bot token(s) (get from [@BotFather](https://t.me/BotFather) in Telegram).
+   fill with your DMarket PRIVATE API key(s) (use array even if 1 account tracking) and Telegram bot token(s) (get from [@BotFather](https://t.me/BotFather) in Telegram).
    * `copy config\chatids.example.json config\chatids.json` (Windows)
    * or `cp config/chatids.example.json config/chatids.json` (Unix/Mac)
-     fill with your DMarket PUBLIC API keys (if needed for queries—multiple as in example) and corresponding Telegram chat IDs.
-     To get a chat ID (channel ID): Visit [web.telegram.org](https://web.telegram.org), open your created channel, check the address bar—the URL ends with something like `#-721752185`. For posting, prefix it with `-100` (e.g., `"transactions": "-100721752185"` in `chatids.json`).
+   fill with your DMarket PUBLIC API keys (if needed for queries—multiple as in example) and corresponding Telegram chat IDs.
+   To get a chat ID (channel ID): Visit [web.telegram.org](https://web.telegram.org), open your created channel, check the address bar—the URL ends with something like `#-721752185`. For posting, prefix it with `-100` (e.g., `"transactions": "-100721752185"` in `chatids.json`).
 4. Install dependencies: `go mod tidy`
 5. Run the app:
    - `go run cmd/transactionTracker/main.go`
