@@ -1,0 +1,13 @@
+config/secretKeys.json
+config/chatids.json
+
+*.exe
+*.dll
+*.so
+*.dylib
+
+go.work
+go.work.sum
+
+.vscode/
+*.log
