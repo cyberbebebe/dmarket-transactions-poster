@@ -10,7 +10,7 @@ Requires **Go 1.16+** (tested on Go 1.24.5, Windows 10).
 2. `cd dmarket-transactions-poster`
 3. Copy and fill config templates:
 
-   PRIVATE KEYs
+   PRIVATE KEYs:
    `copy config\secretKeys.example.json config\secretKeys.json` (Windows)
 
    or `cp config/secretKeys.example.json config/secretKeys.json` (Unix/Mac)
@@ -18,7 +18,7 @@ Requires **Go 1.16+** (tested on Go 1.24.5, Windows 10).
    fill with your DMarket PRIVATE API key(s) (use array even if 1 account tracking) and Telegram bot token(s) (get from [@BotFather](https://t.me/BotFather) in Telegram).
 
 
-   PUBLIC KEYs -> Telegram chat IDs
+   PUBLIC KEYs -> Telegram chat IDs:
 
    `copy config\chatids.example.json config\chatids.json` (Windows)
 
