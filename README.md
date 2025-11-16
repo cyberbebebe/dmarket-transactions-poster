@@ -9,6 +9,7 @@ Requires **Go 1.16+** (tested on Go 1.24.5, Windows 10).
 1. Clone the repo: `git clone https://github.com/cyberbebebe/dmarket-transactions-poster.git`
 2. `cd dmarket-transactions-poster`
 3. Copy and fill config templates:
+
    PRIVATE KEYs
    `copy config\secretKeys.example.json config\secretKeys.json` (Windows)
    or `cp config/secretKeys.example.json config/secretKeys.json` (Unix/Mac)
