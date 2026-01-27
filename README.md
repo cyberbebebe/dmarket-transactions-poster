@@ -69,7 +69,9 @@ Reverted Sell post example (from older code version):
 ## Important notes before use:
 
 1. This is **half-vibecoded project** by Go beginner amateur **for self usage**.
+   
    This code is **not** what professional project should be like.
+   
 2. There are some inconveniences, "rules" and limitations due to DMarket's web history and dumb "programmer":
    2.1) This code uses history endpoint with sorting **by updatedAt**, this means that transactions that where trade protected **will post again** with new status "Success" or "Reverted".
 
@@ -81,7 +83,7 @@ Reverted Sell post example (from older code version):
    2.3) Profit line **will not** appear every time due to **itemId**s are **not** available in some new and all transactions made roughly **before** September 2025.
    _Maybe i will "expand" "bought-list" using /user-targets/closed endpoint in future_.
 
-   2.4) History **does not** respond with offset greater than **100.000**. I dont have this many transactions, so i probably won't bother fixint it for a few years.
+   2.4) History **does not** respond with offset greater than **100.000**. I dont have this many transactions, so i probably won't bother fixing it for now.
 
    2.5) This code requests up to 10 last updated transactions per 15 seconds (by default). However this can be modified by increasing the limit from `&limit=10` to `&limit=100` in func GetLastTransactions() endpoint or/and changing the timing in main.go: `time.Sleep(15 * time.Second)` for something like `time.Sleep(5 * time.Minute)`
    **Warning:** telegram **will** mute your bot/channel up to 1 minute if you spam too much messages in a few seconds (like 30 messages per 2 seconds).
