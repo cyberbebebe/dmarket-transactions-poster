@@ -55,3 +55,23 @@ type TransactionsResponse struct {
 	Objects []Transaction `json:"objects"`
 	Total   int           `json:"total"`
 }
+
+type TargetTrade struct {
+	OfferID  string `json:"OfferID"`
+	TargetID string `json:"TargetID"`
+	AssetID  string `json:"AssetID"` // This corresponds to ItemID
+	Price    struct {
+		CurrencyCode string  `json:"CurrencyCode"`
+		Amount       float64 `json:"Amount"`
+	} `json:"Price"`
+	Title            string `json:"Title"`
+	ClosedAt         string `json:"ClosedAt"`
+	Status           string `json:"Status"`
+	FinalizationTime string `json:"FinalizationTime"`
+}
+
+type UserTargetsClosedResponse struct {
+	Trades []TargetTrade `json:"Trades"`
+	Total  string        `json:"Total"`  // API returns this as a string number
+	Cursor string        `json:"Cursor"` // Used for pagination
+}

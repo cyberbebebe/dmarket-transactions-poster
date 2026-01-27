@@ -1,6 +1,13 @@
 # DMarket-To-Telegram Transactions Poster
 
-A Go application to post DMarket transactions such as Sales, Purchases and Closed Targets to Telegram.
+A Go application to post DMarket Sales, Purchases and Closed Targets transactions to Telegram channel.
+
+## Structure
+
+- `cmd/transactionTracker/`: Main executable entrypoint.
+- `services/`: Shared Go modules (e.g., headers builder, transactions, timestamps).
+- `types/`: Types of DMarket responses for service files
+- `config/`: Your keys and templates (real files ignored by Git via `.gitignore`).
 
 ## Setup
 
@@ -31,17 +38,11 @@ Requires **Go 1.16+** (tested on Go 1.24.5, Windows 10).
 5. Run the app:
    - `go run cmd/transactionTracker/main.go`
 
-     or build an .exe file:
+     or (i recommend) build an .exe file:
 
    - `go build -o DMTransactions.exe ./cmd/transactionTracker`
 
 **Troubleshooting**: If configs fail to load, check JSON format. Set `GOPATH` if not default. For multi-account, ensure arrays in JSON match (e.g., private keys index to public keys).
-
-## Structure
-
-- `cmd/transactionTracker/`: Main executable entrypoint.
-- `services/`: Shared Go modules (e.g., headers builder, transactions, timestamps by keys).
-- `config/`: Your keys and templates (real files ignored by Git via `.gitignore`).
 
 ## Dependencies
 
@@ -72,22 +73,52 @@ Reverted Sell post example (from older code version):
 
    This code is **not** what professional project should be like.
 
-2. There are some inconveniences, "rules" and limitations due to DMarket's web history and dumb "programmer":
-   2.1) This code uses history endpoint with sorting **by updatedAt**. This means that transactions that were trade protected **will be posted again** with the new status "Success" or "Reverted".
+2. There are some notes and inconveniences due to DMarket's web history and dumb "programmer":
 
-   2.1.1) This "double-posting" can be "fixed" by adding `&sortBy=createdAt` http param to the endpoint in `func GetLastTransactions()`. **However,** using this will **not** let you know if a transaction got "Reverted" or moved from pending to "Success".
+   2.1) This code uses web `/history` endpoint with sorting by **updatedAt**. This means that transactions that were trade protected **will be posted again** with the new status "Success" or "Reverted". This "double-posting" can be "fixed" by adding `&sortBy=createdAt` http param to the endpoint in `func GetLastTransactions()`.
 
-   2.2) Balance amount **is approximation** if transaction type is "Sell" or "Target Closed" due to DMarket's balance field calculated as `usable balance + lot sold price`, **not income**, so I manually cut out the 2% fee. **However,** for items cheaper than ~7$, the sale fee is 10%. This code does **not** check each item's price and fees. _It could be fixed by requesting balance endpoint everytime, but i'm too lazy for this._
-   Also, i do **not** track "Instant sale" and "Trade" actions because i don't use them. Adding this **requires** more code changes than just adding parameters to link.
+   **However,** using this will **not** let you know if a transaction got "Reverted" or moved from pending to "Success".
 
-   2.3) The profit line **will not** appear every time because **itemId**s are **not** available in some new transactions and all transactions made roughly **before** September 2025.
-   _Maybe i will "expand" "bought-list" using /user-targets/closed endpoint in future_.
+   2.2) Balance amount **is approximation** if transaction type is "Sell" or "Target Closed" due to DMarket's balance field calculated as `usable balance + lot sold price` (**not net income**), so I simulate the 2% fee.
+   **However:** 
+   - 2.2.1) For items cheaper than ~ 7$, the sale fee is 10%. 
+   - 2.2.2) Also, i do **not** track "Instant sale" and "Trade" actions because i don't use them.
 
-   2.4) History **does not** respond with offset greater than **100.000**. I dont have this many transactions, so i probably won't bother fixing it for now.
+   _Adding new actions tracking and requesting balance requires new functions and changing other._
 
-   2.5) This code requests up to 10 last updated transactions per 15 seconds (by default). However, this can be modified by increasing the limit from `&limit=10` to `&limit=100` in func GetLastTransactions() endpoint or/and changing the timing in main.go: `time.Sleep(15 * time.Second)` for something like `time.Sleep(5 * time.Minute)`
-   **Warning:** telegram **will** mute your bot/channel up to 1 minute if you spam too many messages in a few seconds (like 30 messages per 2 seconds).
+   2.3) I use `/user-targets/closed` endpoint to check buy history before the main cycle starts.
+   
+   There is a commented line: `// totalLimit := 100000`. This variable can be used to limit how many previous **buy** (_purchased_ and _target closed_) **transactions** you want to request in total. For using buy tracking limit:
+   - Uncomment `totalLimit` variable line by deleting `// `
 
-   2.6) This code uses **1 telegram bot** for posting across all channels. It can be changed, but this requires some **major changes** in secretKeys.json and some services/ files, so **i do not recommend changing it** unless you have patience to read and modify this not-very-well-written code.
+   - Change this line `if response.Cursor == "" {` to this:
+     `if response.Cursor == "" || len(allTransactions[key]) > totalLimit {`
 
-   2.7) There is probably more features to be added and bugs to be found.
+   - note that limiting buy history for specified account requires code changes not represented here
+
+   2.4) Default settings requests up to 10 last updated transactions with a frequency of 15 seconds. **However**:
+
+   - 2.4.1) At trade unlock time (8:00 GMT) DMarket verifies trades statuses and can push a bunch of transactions to the top of the history. This means there can be a lot of posts. To handle this properly, read and use the instructions in points 2.4.2 or 2.1.
+   - 2.4.2) This can be modified by increasing the limit from `&limit=10` to `&limit=100` (or any other) in func GetLastTransactions() endpoint or/and changing the timing in main.go: `time.Sleep(15 * time.Second)` for something like `time.Sleep(5 * time.Minute)`
+
+   **Alert:** telegram **can** mute your bot/channel up to 1 minute if you spam too many messages in a few seconds (e.g., 30 messages per 2 seconds).
+
+   2.5) This code uses **1 telegram bot** for posting across all channels. It can be changed, but this requires some **major changes** in `secretKeys.json` and some `services/` files, so **i do not recommend changing it** unless you have patience to read and modify this not-very-well-written code.
+
+   2.6) This code does **not** print stickers info (applied on skins). Maybe i will add this later.
+
+3. You can suggest any other feature/bug/idea. For example i'm thinking of:
+   - fetching CSFloat buy history by using api key to calculate profit for items bought outside of DMarket.
+   - calculating profit and price for non-USD currency.
+   - print total pending balance next to "usable" in message.
+
+### TL;DR (Quick Summary)
+1. Status: Experimental/Amateur vibecoded project. Expect quirks.
+
+2. Double Posts: Transactions appear twice (Pending → Success) because of DMarket's sorting logic. Check note **2.1** for details.
+
+3. Money: Balance is an estimate. It hardcodes a 2% fee and misses the 10% fee for cheap items.
+
+4. Spam Warning: Watch out for the 8:00 GMT unlock wave; high volume might trigger a Telegram mute. Adjust timing and request limits. Check note **2.4.1** for details.
+
+5. Architecture: Uses one Telegram bot to manage all channels

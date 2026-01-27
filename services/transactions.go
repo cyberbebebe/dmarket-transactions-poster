@@ -22,21 +22,22 @@ func GetAllTransactions(secretKeys []string) map[string]map[string]float64 {
 	rootApiUrl := "https://api.dmarket.com"
 	client := &http.Client{}
 
-	fmt.Println("Loading all historical transactions to build price cache...")
+	fmt.Println("Loading purchase(s) history...")
 
 	for _, key := range secretKeys {
-		// Initialize the inner map for this secret key
+		// Initialize inner map
 		if _, exists := allTransactions[key]; !exists {
 			allTransactions[key] = make(map[string]float64)
 		}
+		
+		// totalLimit := 100000 // Limit how much buy transactions you want to check
 
-		offset := 0
-		limit := 1000 // Batch size
+		cursor := "" // Start with empty cursor
 		keepFetching := true
-
+		
 		for keepFetching {
-			// Check "purchase" and "target_closed" to find BUY prices.
-			endpoint := fmt.Sprintf("/exchange/v1/history?version=V3&from=0&activities=purchase,target_closed&statuses=success,trade_protected&offset=%d&limit=%d", offset, limit)
+			// Construct URL with Cursor
+			endpoint := fmt.Sprintf("/marketplace-api/v1/user-targets/closed?Limit=500&Status=successful,trade_protected&Cursor=%s", cursor)
 			
 			headers, _ := generateHeaders(key, method, endpoint, nil)
 			req, _ := http.NewRequest(method, rootApiUrl+endpoint, nil)
@@ -44,55 +45,53 @@ func GetAllTransactions(secretKeys []string) map[string]map[string]float64 {
 
 			resp, err := client.Do(req)
 			if err != nil {
-				break 
+				time.Sleep(5 * time.Second)
+				continue
+			}
+
+			// Handle Rate Limits
+			if resp.StatusCode == 429 {
+				resp.Body.Close()
+				time.Sleep(5 * time.Second)
+				continue 
+			}
+			
+			if resp.StatusCode != 200 {
+				body, _ := io.ReadAll(resp.Body)
+				resp.Body.Close()
+				fmt.Printf("API Error %d: %s\n", resp.StatusCode, string(body))
+				break
 			}
 			
 			body, err := io.ReadAll(resp.Body)
 			resp.Body.Close()
-			if err != nil {
-				fmt.Printf("Read body error: %v\n", err)
-				break
-			}
 
-			var response types.TransactionsResponse
+			var response types.UserTargetsClosedResponse
 			if err := json.Unmarshal(body, &response); err != nil {
 				fmt.Printf("Unmarshal error: %v\n", err)
 				break
 			}
 
-			// Process this batch
-			if len(response.Objects) == 0 {
-				keepFetching = false
-			} else {
-				for _, tx := range response.Objects {
-					// We only care if there is an ItemID and a valid money amount
-					if tx.Details.ItemID != "" && len(tx.Changes) > 0 {
-						amountStr := tx.Changes[0].Money.Amount
-						price, err := strconv.ParseFloat(amountStr, 64)
-						if err == nil {
-							// Store the buy price for this ItemID
-							allTransactions[key][tx.Details.ItemID] = price
-						}
-					}
-				}
-				
-				// Set offset
-				offset += len(response.Objects)
-				
-				// Slight delay
-				time.Sleep(100 * time.Millisecond)
-				
-				// Stop if got less object than limit (means last page)
-				if len(response.Objects) < limit {
-					keepFetching = false
+			// Process items
+			for _, trade := range response.Trades {
+				if trade.AssetID != "" {
+					allTransactions[key][trade.AssetID] = trade.Price.Amount
 				}
 			}
+
+			// Pagination
+			if response.Cursor == "" {
+				keepFetching = false
+			} else {
+				// Update cursor and little time sleep
+				cursor = response.Cursor
+				time.Sleep(100 * time.Millisecond)
+			}
 		}
-		fmt.Printf("Loaded %d items for key %s\n", len(allTransactions[key]), key[64:])
+		fmt.Printf("Total loaded buy transaction for key ...%s: %d items\n", key[64:96], len(allTransactions[key]))
 	}
 
 	return allTransactions
-
 }
 
 func GetLastTransactions(keysStamps map[string]string) (map[string][]types.Transaction){
@@ -167,7 +166,6 @@ func PostTransactions(transactions map[string][]types.Transaction, allTransactio
 			showProfit := false
 			
 			// save bought items to dict
-
 			if tx.Type == "purchase" || tx.Type == "target_closed" {
 				if tx.Details.ItemID != "" {
 					allTransactions[key][tx.Details.ItemID] = change
