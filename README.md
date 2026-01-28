@@ -131,10 +131,15 @@ Reverted Sell post example (from older code version):
    2.6) This code does **not** print stickers info (applied on skins). Maybe i will add this later.
 
 3. You can suggest any feature/bug/question/idea. For example i'm thinking of:
+
    3.1) Calculating profit and prices for non-USD currencies. (Easy)
+
    3.2) Printing the Pending balance next to the "Usable" balance in the message. (Medium)
+
    3.3) Fetching CSFloat's buy history (using API key) to calculate profit for items bought on CSFloat. (Hard)
+
    3.4) Reworking the whole project for **combined cross-platform** (CSFloat & DMarket) transaction posting. (Needs **major** work)
+   
 
 ### TL;DR (Quick Summary)
 
