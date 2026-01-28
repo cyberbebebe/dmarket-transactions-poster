@@ -14,14 +14,21 @@ A Go application to post DMarket Sales, Purchases and Closed Targets transaction
 ### Message structure
 
 `Action` `status`
+
 `item name`
 
+
 `Float: float value` (hidden if item have no float value)
+
 `Phase: string value` (hidden if not applicable)
+
 `Pattern: int value` (hidden if item have no pattern)
 
+
 `Change: float value $` (amount spent or gained in this transaction)
+
 `Profit: float value $ ` (calculated net profit, only if action = Sell and purchase was found)
+
 `Balance: float value $` (approximate **usable** user balance, see Note 2.2)
 
 ## Setup
