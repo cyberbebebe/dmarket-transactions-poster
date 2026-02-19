@@ -33,9 +33,9 @@ A Go application to post DMarket Sales, Purchases and Closed Targets transaction
 
 ### Quick Start (Pre-built)
 
-1. Download `DmarketTrackerV*.zip` from the [Releases page](https://github.com/cyberbebebe/dmarket-transactions-poster/releases)
+1. Download `DmarketTracker*.zip` from the [Releases page](https://github.com/cyberbebebe/dmarket-transactions-poster/releases)
 2. Read the `Use guide.txt` inside the archive.
-3. Run `DmarketTracker.exe`
+3. Run `DmarketTracker` (Linux) or `DmarketTracker.exe` (Windows)
 
 ### Advanced (Build from source)
 
