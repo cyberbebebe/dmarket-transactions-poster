@@ -39,7 +39,9 @@ A Go application to post DMarket Sales, Purchases and Closed Targets transaction
 
 ### Advanced (Build from source)
 
-Requires **Go 1.21+** (tested on Go 1.24.5, Windows 10).
+Dependencies:
+- Go 1.21+ (tested on Go 1.24.5, Windows 10)
+- [Telegram Bot API](https://github.com/go-telegram-bot-api/telegram-bot-api) v5.5.1
 
 1. Clone the repo:
 
@@ -79,11 +81,6 @@ Requires **Go 1.21+** (tested on Go 1.24.5, Windows 10).
 - **App crashes immediately?**. Run it via the terminal (cmd or PowerShell) to see the error message.
 - **JSON Error?** Ensure your `config.json` has commas `,` between fields and account blocks, but no comma after the last field/block.
 - **CSFloat not syncing?** The auto-updater runs on app start and then every **3 days**. Check if your API key is valid.
-
-## Dependencies
-
-- Go 1.21+
-- [Telegram Bot API](https://github.com/go-telegram-bot-api/telegram-bot-api) v5.5.1
 
 ## Examples
 
