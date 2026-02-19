@@ -13,7 +13,7 @@ import (
 func FetchNewTransactions(secretKey string, lastTimestamp int64) ([]types.Transaction, int64, error) {
 	var newTransactions []types.Transaction
 	
-	// We ask for the last 50 and filter manually in Go.
+	// We ask for the last 50 and filter manually
 	endpoint := "/exchange/v1/history?version=V3&limit=50&activities=sell,purchase,target_closed&statuses=success,trade_protected,reverted"
 	
 	method := "GET"
@@ -43,7 +43,7 @@ func FetchNewTransactions(secretKey string, lastTimestamp int64) ([]types.Transa
 	// Filter for new items and update timestamp
 	newestTS := lastTimestamp
 
-	// DMarket returns newest first. We iterate.
+	// DMarket returns newest first.
 	for _, tx := range response.Objects {
 		if tx.UpdatedAt > lastTimestamp {
 			newTransactions = append(newTransactions, tx)
@@ -56,7 +56,7 @@ func FetchNewTransactions(secretKey string, lastTimestamp int64) ([]types.Transa
 	return newTransactions, newestTS, nil
 }
 
-// FetchUserBalance hits /account/v1/balance to get Real + Pending balance.
+// FetchUserBalance to get Real + Pending balance.
 func FetchUserBalance(secretKey string) (types.UserBalanceResponse, error) {
 	var balance types.UserBalanceResponse
 	

@@ -113,8 +113,8 @@ Reverted Sell post example:
 
    2.2) Default settings requests up to 50 _last updated_ transactions, with a frequency of 15 seconds.
    - This can be modified by decreasing the limit from `&limit=50` to `&limit=10` (or any other) in func FetchNewTransactions() endpoint or/and changing the timing in main.go: `time.Sleep(15 * time.Second)` for something like `time.Sleep(5 * time.Minute)`.
-   - If you set `ignore_released` to `false`: At trade unlock time (8:00 GMT) DMarket verifies the status of trades and pushes a bunch of transactions to the top of the history. This means there may be many posts at that time you have a lot of "trade_protected" transactions.
-   - **Critical:** If more transactions happen during your `time.Sleep()` period than your `limit` allows (e.g., 15 transactions happen but limit is 10), the **older** transactions will be **"ignored"**. To negate this, use higher `&limit=` and use `ignore_released`: `true`.
+   - If you set `ignore_released` to `false`: At trade unlock time (8:00 GMT) DMarket verifies the status of trades and pushes a bunch of transactions to the top of the history. This means there may be many posts at that time if you have a lot of "trade_protected" transactions.
+   - **Critical:** If more transactions happen during your `time.Sleep()` period than your `limit` allows (e.g., 15 transactions happen but limit is 10), the **older** transactions will be **ignored**. For properly handle this, use higher `&limit=` and use `ignore_released`: `true`.
 
    _This "ignoring" behavior could be fixed by queueing messages, but i recommend to set `ignore_released` to `true`._
 
