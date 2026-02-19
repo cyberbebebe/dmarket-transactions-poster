@@ -1,5 +1,6 @@
 config/secretKeys.json
 config/chatids.json
+config/config.json
 
 *.exe
 *.dll

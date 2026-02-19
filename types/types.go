@@ -1,9 +1,14 @@
 package types
 
-type AttributeKey struct {
-	Phase          string
-	PaintSeed      string
-	FloatPartValue string
+type AccountConfig struct {
+	Label           string `json:"label"`
+	DMarketKey      string `json:"dmarket_key"`
+	CSFloatKey      string `json:"csfloat_key"` // Optional
+	TelegramToken   string `json:"telegram_token"`
+	TelegramChatID  string `json:"telegram_chat_id"`
+	AdvancedBalance bool   `json:"advanced_balance"`
+	ProfitPercent   bool   `json:"profit_percent"`
+	IgnoreReleased  bool   `json:"ignore_released"`
 }
 
 type ChatIDConfig struct {
@@ -49,11 +54,51 @@ type Transaction struct {
 		Currency string `json:"currency"`
 	} `json:"balance"`
 	UpdatedAt int64 `json:"updatedAt"`
+	CreatedAt int64 `json:"createdAt"`
 }
 
 type TransactionsResponse struct {
 	Objects []Transaction `json:"objects"`
 	Total   int           `json:"total"`
+}
+
+type CostMap map[string]float64
+
+type CSFloatTrade struct {
+	ID       string `json:"id"`
+	Contract struct {
+		Price int `json:"price"` // Price is in CENTS (e.g., 100 = $1.00)
+		Item  struct {
+			FloatValue float64 `json:"float_value"`
+			PaintSeed  *int    `json:"paint_seed"`
+			MarketName string  `json:"market_hash_name"`
+		} `json:"item"`
+	} `json:"contract"`
+}
+
+type DMarketInventoryItem struct {
+	ItemID string `json:"itemId"`
+	Extra  struct {
+		FloatValue float64 `json:"floatValue"`
+		PaintSeed  *int    `json:"paintSeed"` // DMarket uses int for seed
+	} `json:"extra"`
+}
+
+// DMarketInventoryResponse represents the API response from /exchange/v1/user/offers
+type DMarketInventoryResponse struct {
+	Objects []DMarketInventoryItem `json:"objects"`
+	Cursor  string                 `json:"cursor"`
+}
+
+// CSFloatResponse represents the list of trades
+type CSFloatResponse struct {
+	Trades []CSFloatTrade `json:"Trades"`
+	Count  int            `json:"count"`
+}
+
+type UserBalanceResponse struct {
+	Usd               string `json:"usd"`               // Available
+	UsdTradeProtected string `json:"usdTradeProtected"` // Pending
 }
 
 type TargetTrade struct {
@@ -74,4 +119,10 @@ type UserTargetsClosedResponse struct {
 	Trades []TargetTrade `json:"Trades"`
 	Total  string        `json:"Total"`  // API returns this as a string number
 	Cursor string        `json:"Cursor"` // Used for pagination
+}
+
+type AttributeKey struct {
+	Phase          string
+	PaintSeed      string
+	FloatPartValue string
 }

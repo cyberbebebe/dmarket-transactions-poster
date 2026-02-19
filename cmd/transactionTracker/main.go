@@ -2,28 +2,42 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"sync"
 
 	"github.com/cyberbebebe/dmarket-transactions-poster/services"
 )
 
 func main() {
-	secretKeys, _ := services.GetSecretKeys() // Return data in [secretKey1, secretKey2, ...]
-	keysStamps := services.MakeKeysStamps(secretKeys) // Return data in map[secretKey]string
-	chatIDs, _ := services.LoadTransactionChatIDs() // Returns data in map[secretKey[64:]]string
-
-	allTransactions := services.GetAllTransactions(secretKeys)
-	if err := services.InitTelegramBot(); err != nil {
-		fmt.Println("Error initializing Telegram bot:", err)
-		return
+	// 1. Load Config
+	configs, err := services.LoadConfig("config/config.json")
+	if err != nil {
+		panic(err)
 	}
 
-	fmt.Println("Starting main cycle")
+	// 2. Prepare Data (The Brain)
+	costMap, costMu := services.InitCostBasis(configs)
 
-	for {
-		lastTransactions := services.GetLastTransactions(keysStamps)
-		services.PostTransactions(lastTransactions, allTransactions, chatIDs)
-		time.Sleep(15 * time.Second)
+	// 3. Wake up telegram bots
+	botMap, err := services.WakeUpBots(configs)
+	if err != nil { panic(err) }
+	
+	// 4. Start Workers
+	var wg sync.WaitGroup
+
+	fmt.Println("Launching Workers...")
+
+	for _, cfg := range configs {
+		wg.Add(1)
+		// Launch a Tracker for each account
+		botInstance := botMap[cfg.TelegramToken]
+		
+		go services.StartTracker(cfg, botInstance, costMap, costMu, &wg)
+
+		if cfg.CSFloatKey != "" {
+			wg.Add(1)
+			go services.StartCSFloatPoller(cfg, costMap, costMu, &wg)
+		}
 	}
+
+	wg.Wait()
 }
-

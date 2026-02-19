@@ -1,0 +1,32 @@
+[
+  {
+    "label": "Account1",
+    "dmarket_key": "dmarket_private_key",
+    "csfloat_key": "csfloat_private_key",
+    "telegram_token": "1111111111:iJDU25hcuhuvfudhfu2ce2_FDF2SDHsdfs",
+    "telegram_chat_id": "-1001234567890",
+    "advanced_balance": true,
+    "profit_percent": true,
+    "ignore_released": true
+  },
+  {
+    "label": "Account2",
+    "dmarket_key": "dmarket_private_key",
+    "csfloat_key": "csfloat_private_key",
+    "telegram_token": "1234567890:iJDUWSHceyfISCJHDSdxssife_fjhjYfdss",
+    "telegram_chat_id": "-100123454321",
+    "advanced_balance": true,
+    "profit_percent": true,
+    "ignore_released": true
+  },
+  {
+    "label": "Account3",
+    "dmarket_key": "dmarket_private_key",
+    "csfloat_key": "csfloat_private_key",
+    "telegram_token": "0987654321:sdmsfdshcffdjcevbr3gcss_csccfdfdsv",
+    "telegram_chat_id": "-1000987654321",
+    "advanced_balance": true,
+    "profit_percent": true,
+    "ignore_released": true
+  }
+]
