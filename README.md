@@ -89,40 +89,39 @@ Sold with trade-protected status post example:
 
 ![Sell trade_protected example](images/sell-tp.png)
 
-Target Closed with trade-protected status post example (from older code version):
+Target Closed with trade-protected status post example:
 
 ![Target Closed trade_protected example](images/target-closed-tp.png)
 
-Reverted Sell post example (from older code version):
+Reverted Sell post example:
 
 ![Reverted sell example](images/reverted-sell.png)
 
-(For multi-account setup, the programm cycles through keys)
-
-## Important notes before use:
+## Important notes for building from source:
 
 1. This is **almost fully** vibecoded project by Go beginner amateur **for self usage**.
 
    This code is **not** what professional project should be like.
 
-2. There are some notes due to DMarket's web history, Telegram rate limits and dumb programmer:
+2. Notes due to DMarket's history, Telegram and dumb programmer:
 
    2.1) This code uses web `/history` endpoint with sorting by **updatedAt** (default). This means that transactions that were trade protected **will be posted again** with the new status "Success" or "Reverted". This "double-posting" can be "fixed" by
-   - adding `&sortBy=createdAt` http param to the endpoint in `func FetchNewTransactions()`
+   - adding `&sortBy=createdAt` http param to the endpoint in `func FetchNewTransactions()`. **Critical:** this will **not** let you know if a transaction got "Reverted" or moved from "trade_protected" to "success".
 
    or
    - setting "ignore_released" to "true" in account config (recommended).
 
-   **However,** using 1st fix method (`&sortBy=createdAt`) will **not** let you know if a transaction got "Reverted" or moved from pending to "Success".
-
-   2.2) Default settings requests up to 50 _last updated_ transactions, with a frequency of 15 seconds. **However**:
+   2.2) Default settings requests up to 50 _last updated_ transactions, with a frequency of 15 seconds.
    - This can be modified by decreasing the limit from `&limit=50` to `&limit=10` (or any other) in func FetchNewTransactions() endpoint or/and changing the timing in main.go: `time.Sleep(15 * time.Second)` for something like `time.Sleep(5 * time.Minute)`.
-   - At trade unlock time (8:00 GMT), DMarket verifies the status of trades and pushes a bunch of transactions to the top of the history. This means there may be many posts at that time. **Critical:** If more transactions happen during your `time.Sleep()` period than your `limit` allows (e.g., 15 transactions happen but limit is 10), the **older** transactions will be **"ignored"**. To handle this, use higher `&limit=` and follow the instructions in notes **2.1** _(about "ignore_released")_
+   - If you set `ignore_released` to `false`: At trade unlock time (8:00 GMT) DMarket verifies the status of trades and pushes a bunch of transactions to the top of the history. This means there may be many posts at that time you have a lot of "trade_protected" transactions.
+   - **Critical:** If more transactions happen during your `time.Sleep()` period than your `limit` allows (e.g., 15 transactions happen but limit is 10), the **older** transactions will be **"ignored"**. To negate this, use higher `&limit=` and use `ignore_released`: `true`.
 
-   _This "ignoring" behavior could be fixed by using queue for messages, but i recommend setting "ignore_released" to "true"._
+   _This "ignoring" behavior could be fixed by queueing messages, but i recommend to set `ignore_released` to `true`._
 
    **Alert:** Telegram **can** mute your bot or/and channel up to 1 minute if you spam too many messages in a few seconds (e.g., 25 messages per 2 second).
 
    2.3) This code does **not** print stickers info (applied on skins). Maybe i will add this later.
 
 3. You can ask anything or suggest any feature/bug/idea.
+
+## Created for the CS2 trading community and enthusiasts by a CS2 trader
