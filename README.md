@@ -40,6 +40,7 @@ A Go application to post DMarket Sales, Purchases and Closed Targets transaction
 ### Advanced (Build from source)
 
 Dependencies:
+
 - Go 1.21+ (tested on Go 1.24.5, Windows 10)
 - [Telegram Bot API](https://github.com/go-telegram-bot-api/telegram-bot-api) v5.5.1
 
@@ -55,7 +56,7 @@ Dependencies:
 
    Unix/Mac: `cp config/config.example.json config/config.json`
 
-   Open config/config.json and fill in your accounts and telegram data. The file must start with `[` and end with `]`. Example file is inside config folder.
+   Open config/config.json and fill in your accounts and telegram data. The file must start with `[` and end with `]`.
 
    Fields Guide:
    - dmarket_key: (Required) Your Private API key from DMarket.
